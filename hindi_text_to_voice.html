@@ -1,0 +1,53 @@
+
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <title>Hindi Text to Voice Tool</title>
+    <style>
+        body { font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 20px; }
+        textarea { width: 100%; height: 150px; font-size: 16px; }
+        select, button { padding: 10px; margin: 10px 0; font-size: 16px; }
+        audio { margin-top: 20px; width: 100%; }
+    </style>
+</head>
+<body>
+    <h1>हिंदी टेक्स्ट को HD आवाज़ में बदलें</h1>
+    <textarea id="textInput" placeholder="यहाँ हिंदी टेक्स्ट लिखें..."></textarea><br>
+    <label for="voiceSelect">आवाज़ चुनें:</label>
+    <select id="voiceSelect"></select><br>
+    <button onclick="speakText()">आवाज़ में बदलें</button>
+    <button onclick="downloadAudio()">MP3 डाउनलोड करें</button>
+    <audio id="audio" controls></audio>
+
+    <script>
+        let voices = [];
+        let audioBlob;
+
+        function populateVoices() {
+            voices = speechSynthesis.getVoices().filter(voice => voice.lang.startsWith('hi') || voice.lang === 'hi-IN');
+            const voiceSelect = document.getElementById('voiceSelect');
+            voiceSelect.innerHTML = '';
+            voices.forEach((voice, i) => {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = voice.name + (voice.lang ? ` (${voice.lang})` : '');
+                voiceSelect.appendChild(option);
+            });
+        }
+
+        function speakText() {
+            const text = document.getElementById('textInput').value;
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.voice = voices[document.getElementById('voiceSelect').value];
+            speechSynthesis.speak(utterance);
+        }
+
+        function downloadAudio() {
+            alert("MP3 डाउनलोड फीचर ब्राउज़र से सीधे संभव नहीं है। इसके लिए आप स्क्रीन रिकॉर्डर या एक्सटर्नल टूल्स का उपयोग कर सकते हैं।");
+        }
+
+        window.speechSynthesis.onvoiceschanged = populateVoices;
+    </script>
+</body>
+</html>
